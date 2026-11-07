@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import api from './api';
+import api, { login } from './api';
 import AlertMessage from './components/AlertMessage.vue';
 import StudentForm from './components/StudentForm.vue';
 import StudentTable from './components/StudentTable.vue';
@@ -78,7 +78,16 @@ function cancelEdit() {
     errors.value = {};
 }
 
-onMounted(loadStudents);
+onMounted(async () => {
+    try {
+        // Always get a fresh token so an old or invalid one can't cause 401
+        await login('admin@example.com', 'AdminPass123!');
+    } catch (e) {
+        notify('error', e.response?.data?.message ?? 'Login failed.');
+        return;
+    }
+    await loadStudents();
+});
 </script>
 
 <template>

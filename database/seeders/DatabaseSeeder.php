@@ -9,22 +9,23 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $adminPassword = env('SEED_ADMIN_PASSWORD');
+        $userPassword = env('SEED_USER_PASSWORD');
+
+        if (! $adminPassword || ! $userPassword) {
+            $this->command->error('Set SEED_ADMIN_PASSWORD and SEED_USER_PASSWORD in your .env first.');
+
+            return;
+        }
+
         User::updateOrCreate(
             ['email' => 'admin@example.com'],
-            [
-                'name' => 'API Administrator',
-                'password' => 'AdminPass123!',
-                'role' => 'admin',
-            ]
+            ['name' => 'API Administrator', 'password' => $adminPassword, 'role' => 'admin'],
         );
 
         User::updateOrCreate(
             ['email' => 'user@example.com'],
-            [
-                'name' => 'Regular User',
-                'password' => 'UserPass123!',
-                'role' => 'user',
-            ]
+            ['name' => 'Regular User', 'password' => $userPassword, 'role' => 'user'],
         );
     }
 }
